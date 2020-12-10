@@ -1,5 +1,7 @@
 const sequelize = require('./sequelize');
 const User = require("./auth/models/User.js");
+const Drink = require("./drink/models/Drink.js")
+const Ingredient = require("./drink/models/Ingredient.js")
 
 const initDB = () => {
   sequelize.authenticate().then(() => {
@@ -11,8 +13,11 @@ const initDB = () => {
     });
 }
 
-const syncTables = () => {
-  User.sync()
+const syncTables = async () => {
+  /*User.sync();
+  Drink.sync();
+  Ingredient.sync()*/
+  await sequelize.sync({ force: true });
 }
 
 module.exports = initDB;

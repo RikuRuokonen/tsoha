@@ -7,7 +7,7 @@ const Ingredient = sequelize.define("ingredient",{
       unique: true,
       allowNull: false
     },
-    class: {
+    ingredientClass: {
       type: Sequelize.STRING,
       unique: false,
       allowNull: false
