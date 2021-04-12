@@ -1,25 +1,29 @@
 const express = require('express');
-const ensureAuthenticated = require('../utils')
+const ensureAuthenticated = require('../utils');
+const Drink = require('./models/Drink');
 
 const {
-  checkForNewIngredients,
   drinkExists,
   createDrinkToDB,
   getAllDrinksFromDB,
-  createIngredientToDB
+  getDrinksByUserIdFromDB,
+  createReviewToDB,
 } = require("./service")
 
-const createDrink = (req, res) => {
+const createDrink = async (req, res) => {
   const { body } = req;
-  const { name } = body;
+  const { name, recipe, userId } = body;
   console.log("Create new drink: ", name)
-  if(1 === 2){
-    return res.status(404).send({
-      message: "Drink already exists",
+  const existingDrink = await drinkExists(name);
+  if(existingDrink){
+    return res.status(409).send({
+      message: "Drink with that name already exists",
     })
   } else {
     const newDrink = {
       name,
+      recipe,
+      userId
     };
     createDrinkToDB({
       ...newDrink,
@@ -31,27 +35,30 @@ const createDrink = (req, res) => {
   }
 };
 
-const createIngredient = (req, res) => {
-  const { body } = req;
-  const { name, ingredientClass } = body;
-    const newIngredient = {
-      name,
-      ingredientClass,
-    };
-    console.log("NEW INGREDIENT: ", newIngredient)
-    createIngredientToDB({
-      ...newIngredient,
-    }).then(value => res.json(value))
-      .catch(err => res.status(500).send({
-        message: "Error creating new ingredient",
-        err,
-      }))
-};
-
 
 const editDrink = (req, res) => {
-
 };
+
+const createReview = (req, res) => {
+  const { userId, drinkId, content } = req.body;
+  const newReview = {
+    userId,
+    drinkId,
+    content,
+  }
+  console.log(newReview)
+  createReviewToDB({ 
+    ...newReview
+  }).then(value => res.json(value))
+  .catch(err => {
+    console.log("RRlog review errro: ", err)
+    res.status(500).send({
+      message: "Error creating new review",
+      err,
+    })
+    
+  })
+}
 
 const getAll = (req, res) => {
   console.log(getAllDrinksFromDB)
@@ -61,40 +68,21 @@ const getAll = (req, res) => {
       message: "Error fetching drinks",
       err,
     }))
-
 };
 
-const getById = (req, res) => {
-
-};
-exports.addIngredientToDrink = (drinkId, ingredientId) => {
-  return Drink.findByPk(drinkId)
-    .then((tag) => {
-      if (!tag) {
-        console.log("Tag not found!");
-        return null;
-      }
-      return Drink.findByPk(tutorialId).then((tutorial) => {
-        if (!tutorial) {
-          console.log("Tutorial not found!");
-          return null;
-        }
-
-        tag.addTutorial(tutorial);
-        console.log(`>> added Tutorial id=${tutorial.id} to Tag id=${tag.id}`);
-        return tag;
-      });
-    })
-    .catch((err) => {
-      console.log(">> Error while adding Tutorial to Tag: ", err);
-    });
+const getByUserId = (req, res) => {
+  getDrinksByUserIdFromDB(req.params.userId).then((drinks) => {
+    res.status(200).send(drinks)
+  }).catch((err) => {
+    res.status(500).send(err)
+  })
 };
 
 const router = express.Router();
 router.use("/drinks/create", createDrink);
-router.use("/ingredients/create", createIngredient);
+router.use("/review/create", createReview);
 router.use("/drinks/edit", ensureAuthenticated, editDrink);
-router.use('/drinks/', getAll);
-router.use('/drinks/:id', ensureAuthenticated, getById);
+router.use('/drinks/:userId', ensureAuthenticated, getByUserId);
+router.use('/drinks', getAll);
 
 module.exports = router;

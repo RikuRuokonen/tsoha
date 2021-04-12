@@ -24,8 +24,6 @@ app.use(cors({
 initDB();
 setupPassport(app);
 
-
-
 app.get('/test', ensureAuthenticated,  (req, res) => res.send('Tsoha App, please login'));
 app.use('/api/', authRoutes);
 app.use("/api/", drinkRoutes);

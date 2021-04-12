@@ -1,6 +1,6 @@
 const Sequelize = require('Sequelize');
 const sequelize = require('../../sequelize');
-const Ingredient = require('./Ingredient');
+const User = require("./../../auth/models/User")
 
 const Drink = sequelize.define("drink",{
     name: {
@@ -8,10 +8,24 @@ const Drink = sequelize.define("drink",{
       unique: true,
       allowNull: false
     },
+    userId: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    recipe: {
+      type: Sequelize.STRING,
+      unique: false,
+      allowNull: false
+    },
   },
 );
 
-Drink.belongsToMany(Ingredient,{through:"Drink_Ingredients", as:"ingredients", foreignKey: "ingredient_id",});
-Ingredient.belongsToMany(Drink,{through:"Drink_Ingredients", as: "drinks", foreignKey: "drink_id",});
+Drink.associate = () => {
+  Drink.hasMany(Review, {
+    foreignKey: 'drinkId',
+    as: 'reviews'
+  });
+};
+
 
 module.exports = Drink;

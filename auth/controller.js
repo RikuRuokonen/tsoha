@@ -51,7 +51,9 @@ const createUser = async (req, res) => {
   };
 
   User.create(newUser).then(function() {
-    res.redirect('/')
+    res.status(200).send({
+      status: "success!",
+    })
   }).catch(function(error) {
     res.status(500).send({
       message: error,
@@ -61,6 +63,7 @@ const createUser = async (req, res) => {
 }
 
 const getAllUsers = async (req, res) => {
+  //TODO: Parse salt etc away from response :DDD
   getAllUsersFromDB().then(users => res.json(users))
 };
 
@@ -78,7 +81,7 @@ const getUserById = async(req, res) => {
 const router = express.Router();
 router.use("/login", login);
 router.use("/logout", ensureAuthenticated, logout);
-router.use('/register', ensureAuthenticated, createUser);
+router.use('/register', createUser);
 router.use('/getAllUsers', ensureAuthenticated, getAllUsers);
 router.use('/getUserById', ensureAuthenticated, getUserById);
 

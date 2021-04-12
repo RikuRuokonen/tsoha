@@ -1,7 +1,7 @@
 const sequelize = require('./sequelize');
 const User = require("./auth/models/User.js");
-const Drink = require("./drink/models/Drink.js")
-const Ingredient = require("./drink/models/Ingredient.js")
+const Drink = require("./drink/models/Drink.js");
+const Review = require("./drink/models/Review.js");
 
 const initDB = () => {
   sequelize.authenticate().then(() => {
