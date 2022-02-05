@@ -1,23 +1,21 @@
-const User = require("./models/User")
-
+const User = require("./models/User");
 
 const createUserToDB = async (user) => {
-  console.log("USER", user)
-  return await User.create({ ...user});
+  return await User.create({ ...user });
 };
 const getAllUsersFromDB = async () => {
   return await User.findAll();
 };
 
-const getUserByIdFromDB = async id => {
+const getUserByIdFromDB = async (id) => {
   return await User.findOne({
-    where: { id: id }
+    where: { id: id },
   });
 };
 
-const getUserByNameFromDB = async name => {
+const getUserByNameFromDB = async (name) => {
   return await User.findOne({
-    where: { name: name }
+    where: { name: name },
   });
 };
 
@@ -26,4 +24,4 @@ module.exports = {
   getAllUsersFromDB,
   getUserByIdFromDB,
   getUserByNameFromDB,
-}
+};
