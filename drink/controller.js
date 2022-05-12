@@ -81,7 +81,6 @@ const getDrinksByUserId = (req, res) => {
     });
 };
 const getReviewsByDrinkId = (req, res) => {
-  console.log("DRINK ID: ", req.params.drinkId)
   getReviewsByDrinkIdFromDB(req.params.drinkId)
     .then((drinks) => {
       res.status(200).send(drinks);
@@ -107,12 +106,12 @@ const getReviewsByUserId = (req, res) => {
 
 
 const router = express.Router();
-router.use("/drinks/create", createDrink);
-router.use("/review/create", createReview);
+router.use("/drinks/create", ensureAuthenticated, createDrink);
+router.use("/review/create", ensureAuthenticated, createReview);
 router.use("/drinks/edit", ensureAuthenticated, editDrink);
 router.use("/drinks/:userId", ensureAuthenticated, getDrinksByUserId);
 router.use("/review/drink/:drinkId", ensureAuthenticated, getReviewsByDrinkId);
 router.use("/review/user/:userId", ensureAuthenticated, getReviewsByUserId);
-router.use("/drinks", ensureAuthenticated, getAll);
+router.use("/drinks", getAll);
 
 module.exports = router;
